@@ -41,7 +41,7 @@
 
 /***************Platform dependent macro ***********************/
 /* IO */
-#ifdef __unix__
+#if defined (__unix__) 
 /* main func linker name */
 #define SEA_BATTLE_MAIN main
 #include <ctime>
@@ -56,7 +56,7 @@
 
 /* get one str from input */
 #define GETS fgets(cli_line, sizeof cli_line, stdin)
-#elif defined (__ba__)
+#elif defined (__ba__)  
 /* main func linker name */
 #define SEA_BATTLE_MAIN sea_battle_main
 #include <jendefs.h>
@@ -73,6 +73,21 @@
 
 /* get one str from input */
 #define GETS  strncpy(cli_line, input_buffer, sizeof cli_line)
+#elif defined (WIN32)
+/* main func linker name */
+#define SEA_BATTLE_MAIN main
+#include <ctime>
+#include <cassert>
+
+/* printf-like */
+#define PRINT printf
+/* put + go to newline */
+#ifndef PUTSTR
+#define PUTSTR puts
+#endif
+
+/* get one str from input */
+#define GETS fgets(cli_line, sizeof cli_line, stdin)
 #endif				/* platform */
 
 /**************************************************************/
@@ -160,7 +175,7 @@ class Cli {
 namespace RNG {
 	void init(void)
 	{
-#ifdef __unix__
+#if defined (__unix__) || defined (WIN32)
 		time_t UNIX_time;
 		srand((unsigned)time(&UNIX_time));
 #elif defined (__ba__)
@@ -170,7 +185,7 @@ namespace RNG {
 
 	int get(int from, int to)
 	{
-#ifdef __unix__
+#if defined (__unix__) || defined (WIN32)
 		return (from + rand() % (to + 1));
 #elif defined (__ba__)
 		while(bAHI_RndNumPoll() == FALSE);
@@ -183,7 +198,7 @@ namespace RNG {
 	float get( float from, float to )
 	{
 	    float scale;
-#ifdef __unix__
+#if defined (__unix__) || defined (WIN32)
 		scale = rand() / (float) RAND_MAX; /* [0, 1.0] */
 #elif defined (__ba__)
 		scale = u16AHI_ReadRandomNumber() / (float) (-1); /* [0, 1.0] */
@@ -650,7 +665,7 @@ int SEA_BATTLE_MAIN(void)
 	PUTSTR(COPYING);
 	PUTSTR("you are playing SEA Battle game... ");
 	b1.set_ships();
-#ifdef __unix__
+#if defined (__unix__) || defined (WIN32)
 	cli_main.start();
 #endif
 	return EXIT_SUCCESS;
