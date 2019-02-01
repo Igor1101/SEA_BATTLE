@@ -63,6 +63,7 @@
 #include <stdio_dbg.h>
 #include <uart_stream.h>
 #include <AppHardwareApi.h>
+#include <device_conf.h>
 
 /* printf-like */
 #define PRINT pr_cont
@@ -241,7 +242,7 @@ string Cli::find_space(string str)
 	if (str == NULL)
 		return NULL;
 	while (*(str++) != ' ') {
-		if (*str == '\0') {
+		if (*str == '\0' || *str == '\n') {
 			return str;
 		}
 	}
@@ -286,7 +287,7 @@ void Cli::process(void)
 #else
 		battle->private_print_area();
 #endif
-		PRINT("This is your %d try\n", battle->get_tryes());
+		PRINT("This is your %d try\n\r", battle->get_tryes());
 		if( result!= EXIT_SUCCESS) {
 			PUTSTR("Seems you missed");
 			return;
@@ -294,13 +295,21 @@ void Cli::process(void)
 		if(battle->is_ship_killed(X, Y, 100, 100) == true) {
 			PUTSTR("KILLED!");
 			if(battle->is_all_killed()) {
-			    PRINT("YOU WON WITH SCORE %d", battle->get_tryes());
+			    PRINT("YOU WON WITH SCORE %d !!!!!!!!!!!!!", battle->get_tryes());
 			}
 		}
 		else {
 			PUTSTR("WOUNDED!");
 		}
 
+	} else if(CLI_IS("exit")) {
+	    PRINT("exiting...\n\r");
+#if defined (__unix__)
+	    exit(0);
+#elif defined (__ba__)
+	    PRINT("resetting device\n\r");
+	    CPU_RESET;
+#endif
 	}
 }
 
