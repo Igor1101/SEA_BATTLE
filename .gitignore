@@ -266,3 +266,6 @@ __pycache__/
 *.gitattributes
 # produced binary
 a.out
+# GNU\BSD tool files
+CMakeLists.txt
+Makefile

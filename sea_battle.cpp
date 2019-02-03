@@ -304,7 +304,7 @@ void Cli::process(void)
 
 	} else if(CLI_IS("exit")) {
 	    PRINT("exiting...\n\r");
-#if defined (__unix__)
+#if defined (__unix__) || defined (WIN32)
 	    exit(0);
 #elif defined (__ba__)
 	    PRINT("resetting device\n\r");
